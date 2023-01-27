@@ -11,7 +11,7 @@ SetTitleMatchMode, 2
 
 /*
 ====================================================
-Variable Initialization - Test
+Variable Initialization
 ====================================================
 */
 

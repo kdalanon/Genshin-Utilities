@@ -1,13 +1,14 @@
 ﻿if !(A_IsAdmin)
 {
-	Run, *RunAs "%A_ScriptFullPath%"
+	Run '*RunAs "' A_ScriptFullPath '" /restart'
 }
 #SingleInstance Force
-#MaxThreadsPerHotkey 9999; Set a high value to activate the hotkey again while performing a loop
-#MaxHotkeysPerInterval 9999
-#NoEnv
-DetectHiddenWindows, On
-SetTitleMatchMode, 2
+#MaxThreadsPerHotkey 9999 ; Set a high value to activate the hotkey again while performing a loop
+A_MaxHotkeysPerInterval := 9999
+DetectHiddenWindows True
+SetTitleMatchMode 2
+
+; ---- CONTINUE BELOW ----
 
 /*
 ====================================================

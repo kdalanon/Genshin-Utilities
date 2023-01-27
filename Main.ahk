@@ -8,8 +8,6 @@ A_MaxHotkeysPerInterval := 9999
 DetectHiddenWindows True
 SetTitleMatchMode 2
 
-; ---- CONTINUE BELOW ----
-
 /*
 ====================================================
 Variable Initialization
@@ -32,15 +30,15 @@ Tray Menu
 ====================================================
 */
 
-Menu, Tray, Icon, %A_ScriptDir%\Main.ico
-Menu, Tray, NoStandard
-Menu, Tray, Add, Debug
-Menu, Tray, Add, Reload
-Menu, Tray, Add, SkillTimerConfig
-Menu, Tray, Add, SkillTimerStatus
-Menu, Tray, Rename, Reload, &Reload Script (CTRL + ALT + R)
-Menu, Tray, Rename, SkillTimerConfig, Configure skill timers (F10)
-Menu, Tray, Rename, SkillTimerStatus, Close skill timer indicators
+TraySetIcon("Main.ico")
+A_TrayMenu.Delete
+A_TrayMenu.Add("Debug", Debug)
+A_TrayMenu.Add("&Reload Script (CTRL + ALT + R)", Reload)
+A_TrayMenu.Add("Configure skill timers (F10)", SkillTimerConfig)
+A_TrayMenu.Add("Close skill timer indicators", CloseSkillTimer)
+A_TrayMenu.Add("E&xit", Exit)
+
+; ---- CONTINUE BELOW ----
 
 AnimationCancellingToggleTrayMenu:
 ; Create the last menu first, 'CharacterAnimationCancellingTrayToggle' is the label to be executed when you click the item

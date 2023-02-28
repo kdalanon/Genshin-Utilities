@@ -56,8 +56,6 @@ NormalAttackAnimationCancellingToggle.Check("Off")
 A_TrayMenu.Add("Normal Attack Animation Cancel", NormalAttackAnimationCancellingToggle)
 A_TrayMenu.Add("E&xit", Exit)
 
-; ---- CONTINUE BELOW ----
-
 /*
 ====================================================
 Skill cooldown timer function
@@ -66,80 +64,78 @@ Skill cooldown timer function
 
 RunCharacterTimerScripts()
 
-Loop, 4
-{
-	WinWait, Character%A_Index%
-	GroupAdd, SkillTimerScripts, Character Skill Timer Scripts\Character%A_Index%.ahk
-	PartySlot%A_Index%occupied := "No"
-	IniRead, SavedCharacterSlot%A_Index%, Character Skill Timer Scripts\Config.ini, Characters, SavedCharacterSlot%A_Index%
+Loop 4 {
+	WinWait "Character" A_Index
+	GroupAdd "SkillTimerScripts", "Character Skill Timer Scripts\Character" A_Index ".ahk"
+	PartySlot_A_Index_occupied := "No"
+	SavedCharacterSlot_A_Index := IniRead("Character Skill Timer Scripts\Config.ini", "Characters", SavedCharacterSlot_A_Index)
 }
 
-IniRead, SlowingWater, Character Skill Timer Scripts\Config.ini, Options, %SlowingWater%
+SlowingWater := IniRead("Character Skill Timer Scripts\Config.ini", "Options", "SlowingWater")
 
 ; GUI creation
-Gui, Main:-Caption
-Gui, Main:Color, 0x333333 ; Dark background; same as Visual Studio Code Dark+ (default dark) theme - far left side
-Gui, Main:Font, cWhite S10
-Gui, Main:Add, Text, x10, Press F10 to show / hide this window
-Gui, Main:Add, Text, x10 yp+30, Press F11 ingame to show / hide skill timers
-Gui, Main:Add, Picture, vCloseMainGUI gCloseMainGUI xp+355 yp-30, Icons\GUI\Close.png
-Gui, Main:Add, Text, x10 yp+60, Current Party
+MainGUI := Gui("-Caption", "Main")
+MainGUI.BackColor := "0x333333" ; Dark background; same as Visual Studio Code Dark+ (default dark) theme - far left side
+MainGUI.SetFont("cWhite", "s10")
+MainGUI.Add("Text", "x10", "Press F10 to show / hide this window")
+MainGUI.Add("Text", "x10 yp+30", "Press F11 ingame to show / hide skill timers")
+MainGUI.Add("Picture", "vCloseMainGUI xp+355 yp-30", "Icons\GUI\Close.png").OnEvent("Click", SkillTimerConfigHide)
+MainGUI.Add("Text", "x10 yp+60", "Current Party")
 
 ; Party slots
-Gui, Main:Add, Picture, vPartySlot1 gPartySlot1 x10 yp+40, Icons\Party Slots\PartySlot1.png
-Gui, Main:Add, Picture, vPartySlot2 gPartySlot2 xp+100, Icons\Party Slots\PartySlot2.png
-Gui, Main:Add, Picture, vPartySlot3 gPartySlot3 xp+100, Icons\Party Slots\PartySlot3.png
-Gui, Main:Add, Picture, vPartySlot4 gPartySlot4 xp+100, Icons\Party Slots\PartySlot4.png
+MainGUIPartySlot1 := MainGUI.Add("Picture", "vPartySlot1 x10 yp+40", "Icons\Party Slots\PartySlot1.png")
+MainGUIPartySlot2 := MainGUI.Add("Picture", "vPartySlot2 xp+100", "Icons\Party Slots\PartySlot2.png")
+MainGUIPartySlot3 := MainGUI.Add("Picture", "vPartySlot3 xp+100", "Icons\Party Slots\PartySlot3.png")
+MainGUIPartySlot4 := MainGUI.Add("Picture", "vPartySlot4 xp+100", "Icons\Party Slots\PartySlot4.png")
 
 ; 1st row
-Gui, Main:Add, Text, x10 yp+160, Available Party
-Gui, Main:Add, Picture, vAmber gAmber x10 yp+40, Icons\Characters\Amber.png
-Gui, Main:Add, Picture, vBarbara gBarbara xp+100, Icons\Characters\Barbara.png
-Gui, Main:Add, Picture, vFischl gFischl xp+100, Icons\Characters\Fischl.png
-Gui, Main:Add, Picture, vKaeya gKaeya xp+100, Icons\Characters\Kaeya.png
-Gui, Main:Add, Text, vAmberText x30 yp+90, Amber
-Gui, Main:Add, Text, vBarbaraText xp+95, Barbara
-Gui, Main:Add, Text, vFischlText xp+108, Fischl
-Gui, Main:Add, Text, vKaeyaText xp+97, Kaeya
+MainGUI.Add("Text", "x10 yp+160", "Available Party")
+MainGUI.Add("Picture", "vAmber x10 yp+40", "Icons\Characters\Amber.png").OnEvent("Click", Amber)
+MainGUI.Add("Picture", "vBarbara xp+100", "Icons\Characters\Barbara.png").OnEvent("Click", Barbara)
+MainGUI.Add("Picture", "vFischl xp+100", "Icons\Characters\Fischl.png").OnEvent("Click", Fischl)
+MainGUI.Add("Picture", "vKaeya xp+100", "Icons\Characters\Kaeya.png").OnEvent("Click", Kaeya)
+MainGUI.Add("Text", "vAmberText x30 yp+90", "Amber")
+MainGUI.Add("Text", "vBarbaraText xp+95", "Barbara")
+MainGUI.Add("Text", "vFischlText xp+108", "Fischl")
+MainGUI.Add("Text", "vKaeyaText xp+97", "Kaeya")
 
 ; 2nd row
-Gui, Main:Add, Picture, vXiangling gXiangling x10 yp+40, Icons\Characters\Xiangling.png
-Gui, Main:Add, Picture, vAether gAether xp+100, Icons\Characters\Aether.png
-Gui, Main:Add, Picture, vNingguang gNingguang xp+100, Icons\Characters\Ningguang.png
-Gui, Main:Add, Picture, vLisa gLisa xp+100, Icons\Characters\Lisa.png
-Gui, Main:Add, Text, vXianglingText x22 yp+90, Xiangling
-Gui, Main:Add, Text, vAetherText xp+108, Aether
-Gui, Main:Add, Text, vNingguangText xp+86, Ningguang
-Gui, Main:Add, Text, vLisaText xp+121, Lisa
+MainGUI.Add("Picture", "vXiangling x10 yp+40", "Icons\Characters\Xiangling.png").OnEvent("Click", Xiangling)
+MainGUI.Add("Picture", "vAether xp+100", "Icons\Characters\Aether.png").OnEvent("Click", Aether)
+MainGUI.Add("Picture", "vNingguang xp+100", "Icons\Characters\Ningguang.png").OnEvent("Click", Ningguang)
+MainGUI.Add("Picture", "vLisa xp+100", "Icons\Characters\Lisa.png").OnEvent("Click", Lisa)
+MainGUI.Add("Text", "vXianglingText x22 yp+90", "Xiangling")
+MainGUI.Add("Text", "vAetherText xp+108", "Aether")
+MainGUI.Add("Text", "vNingguangText xp+86", "Ningguang")
+MainGUI.Add("Text", "vLisaText xp+121", "Lisa")
 
 ; 3rd row
-Gui, Main:Add, Picture, vDiona gDiona x10 yp+40, Icons\Characters\Diona.png
-Gui, Main:Add, Picture, vBeidou gBeidou xp+100, Icons\Characters\Beidou.png
-Gui, Main:Add, Text, vDionaText x32 yp+90, Diona
-Gui, Main:Add, Text, vBeidouText xp+96, Beidou
+MainGUI.Add("Picture", "vDiona x10 yp+40", "Icons\Characters\Diona.png").OnEvent("Click", Diona)
+MainGUI.Add("Picture", "vBeidou xp+100", "Icons\Characters\Beidou.png").OnEvent("Click", Beidou)
+MainGUI.Add("Text", "vDionaText x32 yp+90", "Diona")
+MainGUI.Add("Text", "vBeidouText xp+96", "Beidou")
 
 ; Buttons
-Gui, Main:Add, Checkbox, vSlowingWater xp-110 yp+40, Spiral Abyss Slowing Water (250`% skill cooldown increase)
-Switch SlowingWater
-{
-	Case "SlowingWater=1": GuiControl, Main:, SlowingWater, 1
-	Case "SlowingWater=0": GuiControl, Main:, SlowingWater, 0
+SlowingWaterCheckbox := MainGUI.Add("Checkbox", "vSlowingWater xp-110 yp+40", "Spiral Abyss Slowing Water (250`% skill cooldown increase)")
+If (SlowingWater = 1) {
+	SlowingWaterCheckbox.Value := 1
+} else if (SlowingWater = 0) {
+    SlowingWaterCheckbox.Value := 0
 }
-Gui, Main:Add, Button, gMainButtonOK x20 yp+50 w80, OK
-Gui, Main:Add, Button, gMainButtonReset xp+285 w80, Reset
-Gui, Main:Add, Picture, vSettings gGUISettings xp-115 yp+2, Icons\GUI\Settings.png
+MainGUI.Add("Button", "x20 yp+50 w80", "OK").OnEvent("Click", MainButtonOK)
+MainGUI.Add("Button", "xp+285 w80", "Reset").OnEvent("Click", MainButtonReset)
+MainGUI.Add("Picture", "vSettings xp-115 yp+2", "Icons\GUI\Settings.png").OnEvent("Click", GUISettings)
 
 OnMessage(0x200,"WM_MOUSEHOVER")
 
-Loop, 4
-{
-	if (SavedCharacterSlot%A_Index% != "")
+Loop 4 {
+	if (SavedCharacterSlot_A_Index != "")
 	{
-		Gosub, % SavedCharacterSlot%A_Index%
+		SavedCharacterSlot_A_Index
 	}
 }
 
-TrayTip, Genshin Utilities, Script loaded
+TrayTip "Script loaded", "Genshin Utilities"
 return
 
 /*
@@ -147,6 +143,8 @@ return
 Tray Menu Functions
 ====================================================
 */
+
+; ---- CONTINUE BELOW ----
 
 Debug:
 ListLines
@@ -297,7 +295,7 @@ SkillTimerConfigShow()
 	DllCall("SetFocus", "Ptr", 0)
 }
 
-SkillTimerConfigHide()
+SkillTimerConfigHide(*)
 {
 	Global
 	Gui, Main:Hide
@@ -880,10 +878,6 @@ Loop, 4
 {
 	Gosub, PartySlot%A_Index%
 }
-return
-
-CloseMainGUI:
-SkillTimerConfigHide()
 return
 
 CloseElementsGUI:
